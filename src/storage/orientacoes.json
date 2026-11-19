@@ -1,0 +1,116 @@
+{
+  "_sobre": "STANDBY: base local de demonstração por categoria (município de São Paulo). A versão final virá da API Java (Spring AI + RAG). Não acrescente telefones ou horários sem fonte oficial.",
+  "municipioIbge": 3550308,
+  "fontePadrao": {
+    "titulo": "Portal SP156 — Prefeitura de São Paulo",
+    "url": "https://sp156.prefeitura.sp.gov.br"
+  },
+  "categorias": {
+    "acessibilidade": {
+      "orgaoResponsavel": "Dono do imóvel em frente, com fiscalização da Subprefeitura",
+      "servico": "Em São Paulo, a manutenção da calçada cabe ao proprietário do imóvel. Se ele não consertar, a Subprefeitura pode fiscalizar e notificar a partir de um pedido no SP156.",
+      "canais": [
+        { "tipo": "TELEFONE", "valor": "156" },
+        { "tipo": "SITE", "valor": "sp156.prefeitura.sp.gov.br" }
+      ],
+      "passos": [
+        "Tire uma foto que mostre o problema e o número do imóvel.",
+        "No SP156, procure o serviço de fiscalização de calçadas e informe o endereço.",
+        "Anote o número do protocolo e conte aqui, numa atualização, para os vizinhos acompanharem."
+      ],
+      "cuidados": ["Não desça para a rua para fotografar. Se alguém se machucou, ligue 192."]
+    },
+    "buraco": {
+      "orgaoResponsavel": "Subprefeitura da região",
+      "servico": "Buracos no asfalto de vias municipais são consertados pela Subprefeitura. O pedido de reparo é aberto pelo SP156.",
+      "canais": [
+        { "tipo": "TELEFONE", "valor": "156" },
+        { "tipo": "SITE", "valor": "sp156.prefeitura.sp.gov.br" }
+      ],
+      "passos": [
+        "Anote o endereço mais próximo e um ponto de referência.",
+        "No SP156, procure o serviço de reparo de buraco na via e registre o pedido.",
+        "Guarde o protocolo e conte aqui, numa atualização, para os vizinhos acompanharem."
+      ],
+      "cuidados": [
+        "Não pare no meio da via para fotografar. Se houver risco imediato de acidente, avise a autoridade de trânsito."
+      ]
+    },
+    "iluminacao": {
+      "orgaoResponsavel": "Prefeitura de São Paulo (iluminação pública)",
+      "servico": "Lâmpadas apagadas, piscando ou acesas de dia na iluminação pública são registradas no SP156. Tenha em mãos o endereço e, se possível, o número do poste.",
+      "canais": [
+        { "tipo": "TELEFONE", "valor": "156" },
+        { "tipo": "SITE", "valor": "sp156.prefeitura.sp.gov.br" }
+      ],
+      "passos": [
+        "Anote o endereço e, se conseguir ver, o número pintado no poste.",
+        "No SP156, procure o serviço de iluminação pública e descreva o defeito.",
+        "Guarde o protocolo e registre aqui como atualização."
+      ],
+      "cuidados": [
+        "Não mexa em fios caídos nem em postes danificados. Em caso de fio partido, mantenha distância e avise a distribuidora de energia."
+      ]
+    },
+    "arvore": {
+      "orgaoResponsavel": "Subprefeitura da região",
+      "servico": "Poda e remoção de árvores em calçadas e praças são pedidas à Subprefeitura pelo SP156. Árvore caindo ou galho sobre fiação é situação de risco.",
+      "canais": [
+        { "tipo": "TELEFONE", "valor": "156" },
+        { "tipo": "SITE", "valor": "sp156.prefeitura.sp.gov.br" },
+        { "tipo": "TELEFONE", "valor": "199 (Defesa Civil, em risco iminente)" }
+      ],
+      "passos": [
+        "Veja se há risco imediato: galho sobre fios, sobre a calçada ou árvore inclinando.",
+        "Sem risco imediato, peça a avaliação de poda pelo SP156.",
+        "Com risco iminente de queda, acione a Defesa Civil (199) e afaste as pessoas do local."
+      ],
+      "cuidados": ["Não tente podar sozinho nem encostar em galhos apoiados na fiação elétrica."]
+    },
+    "lixo": {
+      "orgaoResponsavel": "Prefeitura de São Paulo (limpeza urbana)",
+      "servico": "Entulho, descarte irregular e lixo acumulado em vias públicas são registrados no SP156 para remoção e fiscalização.",
+      "canais": [
+        { "tipo": "TELEFONE", "valor": "156" },
+        { "tipo": "SITE", "valor": "sp156.prefeitura.sp.gov.br" }
+      ],
+      "passos": [
+        "Fotografe o material e anote o endereço exato.",
+        "No SP156, procure o serviço de remoção de entulho ou descarte irregular.",
+        "Guarde o protocolo e atualize aqui quando a remoção acontecer."
+      ],
+      "cuidados": ["Não mexa em materiais cortantes ou desconhecidos."]
+    },
+    "vazamento": {
+      "orgaoResponsavel": "Sabesp (água e esgoto)",
+      "servico": "Vazamentos de água ou esgoto na rua são de responsabilidade da Sabesp, a companhia de saneamento que atende a capital.",
+      "canais": [
+        { "tipo": "SITE", "valor": "www.sabesp.com.br" },
+        { "tipo": "TELEFONE", "valor": "156 (se não souber a quem recorrer)" }
+      ],
+      "passos": [
+        "Anote o endereço e se a água é limpa ou de esgoto.",
+        "Registre o vazamento nos canais de atendimento da Sabesp.",
+        "Guarde o protocolo e conte aqui, numa atualização."
+      ],
+      "cuidados": ["Evite contato com água de esgoto."]
+    },
+    "pichacao": {
+      "orgaoResponsavel": "Prefeitura de São Paulo (zeladoria)",
+      "servico": "Pichação em bens públicos pode ser registrada no SP156. Em imóveis particulares, a limpeza cabe ao proprietário.",
+      "canais": [
+        { "tipo": "TELEFONE", "valor": "156" },
+        { "tipo": "SITE", "valor": "sp156.prefeitura.sp.gov.br" }
+      ],
+      "passos": [
+        "Fotografe o local e anote o endereço.",
+        "No SP156, procure o serviço de zeladoria ou limpeza de pichação.",
+        "Guarde o protocolo e atualize aqui."
+      ],
+      "cuidados": []
+    }
+  },
+  "fontesPorCategoria": {
+    "vazamento": [{ "titulo": "Sabesp — atendimento", "url": "https://www.sabesp.com.br" }]
+  }
+}
