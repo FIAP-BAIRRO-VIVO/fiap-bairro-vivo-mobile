@@ -108,15 +108,6 @@ export default function Sobre() {
           ))}
         </Card>
 
-        <View style={{ gap: 8 }}>
-          <Overline>INTEGRAÇÕES PENDENTES</Overline>
-          <Text style={type.small}>
-            Login, cadastro, perfil e a IA de orientação virão da API Java; ocorrências, votos,
-            categorias e relatórios, da API .NET. Enquanto os contratos não são liberados, o app
-            funciona 100% local.
-          </Text>
-        </View>
-
         {revelado ? (
           <View style={{ gap: 8 }}>
             <Overline>MODO DEMONSTRAÇÃO</Overline>

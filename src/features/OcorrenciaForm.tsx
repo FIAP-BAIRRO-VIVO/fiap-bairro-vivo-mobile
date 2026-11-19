@@ -494,12 +494,7 @@ export function OcorrenciaForm({
             <>
               {recursos.enviarFotos ? (
                 <Fotos fotos={v.fotos} onChange={(f) => mudar('fotos', f)} erro={erros.fotos} />
-              ) : (
-                <Notice icon={<Info size={18} color={colors.asfalto} strokeWidth={2} />}>
-                  Fotos: o envio de imagens aguarda o serviço de armazenamento da API (STANDBY). Por
-                  enquanto, publique sem foto.
-                </Notice>
-              )}
+              ) : null}
               <Checkbox
                 boxed
                 checked={v.anonimoPublico}

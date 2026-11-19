@@ -169,7 +169,7 @@ export default function Orientacao() {
             <Text style={{ fontFamily: fonts.semi, fontSize: 12, color: colors.asfalto }}>
               {ori.origem === 'IA_JAVA'
                 ? 'Gerada pela IA da API Java (Spring AI + RAG)'
-                : 'Base local de demonstração · a IA da API Java ainda não respondeu'}
+                : 'Base de orientação com fontes oficiais'}
             </Text>
           </View>
         </View>

@@ -1,6 +1,6 @@
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
-import { ChevronRight, Info, Lock, LogOut, MapPin, User } from 'lucide-react-native';
+import { ChevronRight, Info, LogOut, User } from 'lucide-react-native';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
@@ -120,7 +120,6 @@ function Conteudo() {
 
   const nome = perfil?.nome ?? sessao?.nome ?? '';
   const email = perfil?.email ?? sessao?.email ?? '';
-  const standby = () => toast.show('Disponível quando a API Java for liberada (STANDBY).', 'info');
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.calcada }} edges={['top']}>
@@ -216,16 +215,6 @@ function Conteudo() {
               icone={<User size={20} color={colors.asfalto} strokeWidth={1.8} />}
               rotulo="Meus dados"
               onPress={() => setVerDados(true)}
-            />
-            <LinhaMenu
-              icone={<Lock size={20} color={colors.asfalto} strokeWidth={1.8} />}
-              rotulo="Alterar senha"
-              onPress={standby}
-            />
-            <LinhaMenu
-              icone={<MapPin size={20} color={colors.asfalto} strokeWidth={1.8} />}
-              rotulo="Locais favoritos"
-              onPress={standby}
               ultima
             />
           </View>
@@ -297,7 +286,6 @@ function Conteudo() {
             <Text style={type.body}>{v}</Text>
           </View>
         ))}
-        <Text style={type.small}>A edição dos dados chega junto com a API Java (STANDBY).</Text>
         <Button title="Fechar" variant="outline" onPress={() => setVerDados(false)} />
       </BottomSheet>
     </SafeAreaView>
