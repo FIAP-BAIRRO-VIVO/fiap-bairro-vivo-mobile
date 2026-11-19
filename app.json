@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Bairro Vivo",
+    "slug": "bairro-vivo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F6F4EE",
+        "foregroundImage": "./assets/adaptive-icon.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-font",
+      "expo-splash-screen"
+    ],
+    "scheme": "bairrovivo",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F6F4EE"
+    },
+    "extra": {
+      "commitHash": "PREENCHER_HASH_DO_COMMIT"
+    },
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
