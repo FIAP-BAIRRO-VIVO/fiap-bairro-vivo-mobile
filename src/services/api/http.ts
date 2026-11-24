@@ -2,6 +2,7 @@ import * as Crypto from 'expo-crypto';
 
 import { API_DOTNET_URL, API_TIMEOUT_MS } from '@/config/env';
 import { MENSAGENS, ServiceError } from '@/domain/erros';
+import type { Sessao } from '@/models';
 import { carregarSessao, salvarSessao, sessaoExpirada } from '@/storage/sessionStore';
 
 import { erroDaApi } from './mapeadores';
@@ -68,9 +69,11 @@ export async function apiDotnet<T>(
 async function requisitar<T>(metodo: string, caminho: string, opcoes: Opcoes): Promise<T> {
   const { body, auth = 'opcional', idempotente = false, query } = opcoes;
   const headers: Record<string, string> = { Accept: 'application/json' };
+  let emissor: Sessao['emissor'];
 
   if (auth !== 'nenhuma') {
     const sessao = await carregarSessao();
+    emissor = sessao?.emissor;
     if (sessao && sessaoExpirada(sessao)) {
       await salvarSessao(null);
       if (auth === 'obrigatoria') throw new ServiceError(401, MENSAGENS.sessaoExpirada);
@@ -114,6 +117,11 @@ async function requisitar<T>(metodo: string, caminho: string, opcoes: Opcoes): P
 
   if (!resposta.ok) {
     const erro = erroDaApi(resposta.status, json);
+    // A .NET ainda não aceita o JWT da API Java no Azure (chave diferente). Um 401 aqui não
+    // significa que o login Java expirou, então a sessão Java continua.
+    if (erro.status === 401 && headers.Authorization && emissor === 'JAVA') {
+      throw new ServiceError(401, 'Esta função ainda não aceita contas criadas pela API Java.');
+    }
     // Token recusado: limpa a sessão para o app pedir login de novo.
     if (erro.status === 401 && headers.Authorization) {
       await salvarSessao(null);
