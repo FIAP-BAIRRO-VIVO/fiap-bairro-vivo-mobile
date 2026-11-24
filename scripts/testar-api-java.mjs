@@ -6,7 +6,7 @@
  * CORS e a aceitação do JWT Java pela API .NET. Casos "BUG API" documentam
  * divergências conhecidas; o processo só falha se outro caso quebrar.
  */
-const J = process.env.API_JAVA_URL ?? 'https://fiap-bairro-vivo-java.onrender.com';
+const J = process.env.API_JAVA_URL ?? 'https://bairro-vivo-java-566385.azurewebsites.net';
 const N = process.env.API_DOTNET_URL ?? 'https://fiap-bairro-vivo-csharp.onrender.com';
 const resultados = [];
 
@@ -14,11 +14,18 @@ async function req(nome, metodo, url, { token, body, esperado, headers = {} } = 
   const h = { ...headers };
   if (token) h.Authorization = `Bearer ${token}`;
   if (body !== undefined) h['Content-Type'] = 'application/json';
-  const r = await fetch(url, {
-    method: metodo,
-    headers: h,
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  let r;
+  try {
+    r = await fetch(url, {
+      method: metodo,
+      headers: h,
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  } catch (e) {
+    // Falha de rede: registra e segue com os outros casos.
+    resultados.push({ ok: false, nome, metodo, url, status: 'REDE', esperado, resumo: String(e.cause ?? e) });
+    return { status: 0, json: null, headers: new Headers() };
+  }
   const txt = await r.text();
   let json = null;
   try {
@@ -164,6 +171,36 @@ await req(
     esperado: 200,
   },
 );
+
+// CRUD do próprio usuário (por último: o DELETE desativa a conta de teste)
+const novoNome = 'Teste App Editado';
+const pat = await req('CRUD: editar nome (PATCH /usuarios/me)', 'PATCH', `${J}/api/v1/usuarios/me`, {
+  token: tk,
+  body: { nome: novoNome },
+});
+const me2 = await req('CRUD: ler perfil depois de editar', 'GET', `${J}/api/v1/usuarios/me`, {
+  token: tk,
+});
+resultados.push({
+  ok: pat.json?.nome === novoNome && me2.json?.nome === novoNome,
+  nome: 'CRUD: nome novo salvo',
+  metodo: '-',
+  url: '-',
+  status: String(me2.json?.nome),
+});
+await req('CRUD: editar com nome vazio', 'PATCH', `${J}/api/v1/usuarios/me`, {
+  token: tk,
+  body: { nome: '' },
+  esperado: 400,
+});
+await req('CRUD: excluir conta (DELETE /usuarios/me)', 'DELETE', `${J}/api/v1/usuarios/me`, {
+  token: tk,
+  esperado: [200, 204],
+});
+await req('CRUD: login depois de excluir', 'POST', `${J}/api/v1/auth/login`, {
+  body: { email, senha },
+  esperado: [401, 403],
+});
 
 console.log('\n=== RESULTADOS (API Java) ===');
 for (const r of resultados)
