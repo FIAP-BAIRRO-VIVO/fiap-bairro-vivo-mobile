@@ -12,7 +12,7 @@ import type { CadastroInput, LoginInput, Perfil, Sessao, UsuarioPublico } from '
 import { carregarSessao, salvarSessao, sessaoExpirada } from '@/storage/sessionStore';
 
 import { LocalAuthService } from '../local/LocalAuthService';
-import type { AuthService } from '../types';
+import type { AuthService, PerfilInput } from '../types';
 
 import { apiDotnet } from './http';
 
@@ -100,4 +100,15 @@ export class PonteAuthService implements AuthService {
     if (!s) throw new ServiceError(401, MENSAGENS.naoAutenticado);
     return { id: s.idUsuario, nome: s.nome, email: s.email, perfil: s.perfil, ativo: true };
   }
+
+  /** Contas de teste são fixas no banco: não dá para editar nem excluir. */
+  async atualizarPerfil(_input: PerfilInput): Promise<UsuarioPublico> {
+    throw new ServiceError(403, CONTA_DE_TESTE);
+  }
+
+  async excluirConta(): Promise<void> {
+    throw new ServiceError(403, CONTA_DE_TESTE);
+  }
 }
+
+const CONTA_DE_TESTE = 'Contas de teste não podem ser editadas nem excluídas.';

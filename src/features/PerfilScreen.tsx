@@ -1,6 +1,6 @@
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
-import { ChevronRight, Info, LogOut, User } from 'lucide-react-native';
+import { ChevronRight, Info, LogOut, Pencil, Trash2, User } from 'lucide-react-native';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
@@ -9,6 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   BottomSheet,
   Button,
+  FormField,
   GradientView,
   Protegida,
   StickerShadow,
@@ -17,6 +18,7 @@ import {
 import { iniciais } from '@/domain/authRules';
 import { useCarregar } from '@/hooks/useCarregar';
 import { useSession } from '@/hooks/useSession';
+import { ServiceError } from '@/domain/erros';
 import { atualizacaoService, authService, ocorrenciaService } from '@/services';
 import { colors, fonts, gradients, type } from '@/theme';
 
@@ -104,11 +106,22 @@ function Conteudo() {
   const toast = useToast();
   const { sessao, sair } = useSession();
   const [verDados, setVerDados] = useState(false);
+  const [editando, setEditando] = useState(false);
+  const [novoNome, setNovoNome] = useState('');
+  const [erroNome, setErroNome] = useState<string>();
+  const [salvando, setSalvando] = useState(false);
+  const [excluindo, setExcluindo] = useState(false);
+  const [confirmarExclusao, setConfirmarExclusao] = useState(false);
   const cidadao = sessao?.perfil === 'CIDADAO';
+  // Contas de teste (token de teste da .NET) são fixas: não dá para editar nem excluir.
+  const gerenciavel = sessao?.emissor !== 'TESTE_DOTNET';
   const hash = String(Constants.expoConfig?.extra?.commitHash ?? 'sem hash');
   const versao = Constants.expoConfig?.version ?? '1.0.0';
 
-  const { dados: perfil } = useCarregar(() => authService.perfil(), [sessao?.idUsuario]);
+  const { dados: perfil } = useCarregar(
+    () => authService.perfil(),
+    [sessao?.idUsuario, sessao?.nome],
+  );
   const { dados: numeros } = useCarregar(async () => {
     if (!cidadao) return null;
     const [minhas, resumo] = await Promise.all([
@@ -120,6 +133,43 @@ function Conteudo() {
 
   const nome = perfil?.nome ?? sessao?.nome ?? '';
   const email = perfil?.email ?? sessao?.email ?? '';
+
+  const abrirEdicao = () => {
+    setNovoNome(nome);
+    setErroNome(undefined);
+    setEditando(true);
+  };
+
+  const salvarNome = async () => {
+    setSalvando(true);
+    setErroNome(undefined);
+    try {
+      await authService.atualizarPerfil({ nome: novoNome });
+      setEditando(false);
+      toast.show('Seus dados foram atualizados.', 'sucesso');
+    } catch (e) {
+      const err = e instanceof ServiceError ? e : null;
+      if (err?.campos?.nome) setErroNome(err.campos.nome);
+      else toast.show(err?.mensagem ?? 'Não deu para salvar agora.', 'aviso');
+    } finally {
+      setSalvando(false);
+    }
+  };
+
+  const excluirConta = async () => {
+    setExcluindo(true);
+    try {
+      await authService.excluirConta();
+      setConfirmarExclusao(false);
+      await sair();
+      toast.show('Sua conta foi excluída.', 'info');
+      router.replace('/login');
+    } catch (e) {
+      toast.show(e instanceof ServiceError ? e.mensagem : 'Não deu para excluir agora.', 'aviso');
+    } finally {
+      setExcluindo(false);
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.calcada }} edges={['top']}>
@@ -215,8 +265,23 @@ function Conteudo() {
               icone={<User size={20} color={colors.asfalto} strokeWidth={1.8} />}
               rotulo="Meus dados"
               onPress={() => setVerDados(true)}
-              ultima
+              ultima={!gerenciavel}
             />
+            {gerenciavel ? (
+              <>
+                <LinhaMenu
+                  icone={<Pencil size={20} color={colors.asfalto} strokeWidth={1.8} />}
+                  rotulo="Editar meus dados"
+                  onPress={abrirEdicao}
+                />
+                <LinhaMenu
+                  icone={<Trash2 size={20} color={colors.sinalEscuro} strokeWidth={1.8} />}
+                  rotulo="Excluir minha conta"
+                  onPress={() => setConfirmarExclusao(true)}
+                  ultima
+                />
+              </>
+            ) : null}
           </View>
 
           <Pressable
@@ -287,6 +352,48 @@ function Conteudo() {
           </View>
         ))}
         <Button title="Fechar" variant="outline" onPress={() => setVerDados(false)} />
+      </BottomSheet>
+
+      <BottomSheet
+        visible={editando}
+        onClose={() => setEditando(false)}
+        accessibilityLabel="Editar meus dados"
+      >
+        <Text style={type.h2}>Editar meus dados</Text>
+        <FormField
+          label="Nome"
+          value={novoNome}
+          onChangeText={setNovoNome}
+          error={erroNome}
+          maxLength={120}
+          autoCapitalize="words"
+          accessibilityLabel="Nome"
+        />
+        <View style={{ gap: 2 }}>
+          <Text style={type.label}>Email</Text>
+          <Text style={type.body}>{email}</Text>
+        </View>
+        <Button title="Salvar" loading={salvando} onPress={salvarNome} />
+        <Button title="Cancelar" variant="outline" onPress={() => setEditando(false)} />
+      </BottomSheet>
+
+      <BottomSheet
+        visible={confirmarExclusao}
+        onClose={() => setConfirmarExclusao(false)}
+        accessibilityLabel="Excluir minha conta?"
+      >
+        <Text style={type.h2}>Excluir minha conta?</Text>
+        <Text style={type.body}>
+          Você sai do app e não vai conseguir entrar de novo com {email}. Essa ação não pode ser
+          desfeita.
+        </Text>
+        <Button
+          title="Sim, excluir conta"
+          variant="danger"
+          loading={excluindo}
+          onPress={excluirConta}
+        />
+        <Button title="Cancelar" variant="outline" onPress={() => setConfirmarExclusao(false)} />
       </BottomSheet>
     </SafeAreaView>
   );

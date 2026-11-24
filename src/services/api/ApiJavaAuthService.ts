@@ -1,19 +1,21 @@
 // API Java (Spring Boot) — login oficial do Bairro Vivo.
 //   POST /api/v1/auth/registrar  { nome, email, senha, confirmacaoSenha } → 201 { accessToken, tokenType, expiresIn, usuario }
 //   POST /api/v1/auth/login      { email, senha }                         → 200 { accessToken, ... }
-//   GET  /api/v1/usuarios/me     (Bearer)
+//   GET    /api/v1/usuarios/me   (Bearer) → perfil
+//   PATCH  /api/v1/usuarios/me   { nome } → perfil atualizado
+//   DELETE /api/v1/usuarios/me   → 204 (conta desativada)
 // O JWT (RS256, iss "bairro-vivo-java", aud "bairro-vivo-apis", sub = id do usuário) vale
 // também na API .NET.
 //
 // Contas de teste (maria/joao/admin@bairrovivo.com) não existem na API Java: para elas,
 // e só para elas, o app usa o gerador de JWT de TESTE da API .NET (PonteAuthService).
 
-import { normalizarEmail, validarCadastro, validarLogin } from '@/domain/authRules';
+import { normalizarEmail, validarCadastro, validarLogin, validarPerfil } from '@/domain/authRules';
 import { MENSAGENS, ServiceError } from '@/domain/erros';
 import type { CadastroInput, LoginInput, Sessao, UsuarioPublico } from '@/models';
 import { carregarSessao, salvarSessao, sessaoExpirada } from '@/storage/sessionStore';
 
-import type { AuthService } from '../types';
+import type { AuthService, PerfilInput } from '../types';
 
 import { apiJava } from './httpJava';
 import {
@@ -117,5 +119,26 @@ export class ApiJavaAuthService implements AuthService {
       // A API Java hoje recusa o próprio token em /usuarios/me (401): usa os dados do login.
       return daSessao;
     }
+  }
+
+  async atualizarPerfil(input: PerfilInput): Promise<UsuarioPublico> {
+    const s = await carregarSessao();
+    if (!s) throw new ServiceError(401, MENSAGENS.naoAutenticado);
+    if (s.emissor !== 'JAVA') return this.contasDeTeste.atualizarPerfil(input);
+    const erros = validarPerfil(input);
+    if (Object.keys(erros).length) throw new ServiceError(400, MENSAGENS.dadosInvalidos, erros);
+    const u = await apiJava<UsuarioJavaDto>('PATCH', '/usuarios/me', {
+      body: { nome: input.nome.trim() },
+    });
+    await salvarSessao({ ...s, nome: u.nome });
+    return { id: String(u.id), nome: u.nome, email: u.email, perfil: perfilDaJava(u), ativo: true };
+  }
+
+  async excluirConta(): Promise<void> {
+    const s = await carregarSessao();
+    if (!s) throw new ServiceError(401, MENSAGENS.naoAutenticado);
+    if (s.emissor !== 'JAVA') return this.contasDeTeste.excluirConta();
+    await apiJava<void>('DELETE', '/usuarios/me');
+    await salvarSessao(null);
   }
 }

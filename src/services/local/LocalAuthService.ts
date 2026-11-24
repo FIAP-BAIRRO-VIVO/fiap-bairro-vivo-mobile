@@ -1,13 +1,13 @@
 import * as Crypto from 'expo-crypto';
 
-import { normalizarEmail, validarCadastro, validarLogin } from '@/domain/authRules';
+import { normalizarEmail, validarCadastro, validarLogin, validarPerfil } from '@/domain/authRules';
 import { MENSAGENS, ServiceError } from '@/domain/erros';
 import type { CadastroInput, LoginInput, Sessao, Usuario, UsuarioPublico } from '@/models';
 import { hashSenha } from '@/storage/seed';
 import { carregarSessao, salvarSessao, sessaoExpirada } from '@/storage/sessionStore';
 import { gravarJSON, KEYS, lerJSON } from '@/storage/storage';
 
-import type { AuthService } from '../types';
+import type { AuthService, PerfilInput } from '../types';
 
 import { comErroPadrao, exigirSessao, novoId, publico, simularRede } from './util';
 
@@ -93,5 +93,29 @@ export class LocalAuthService implements AuthService {
     const u = usuarios.find((x) => x.id === usuario.id);
     if (!u) throw new ServiceError(404, 'Conta não encontrada.');
     return publico(u);
+  }
+
+  async atualizarPerfil(input: PerfilInput): Promise<UsuarioPublico> {
+    await simularRede();
+    const erros = validarPerfil(input);
+    if (Object.keys(erros).length) throw new ServiceError(400, MENSAGENS.dadosInvalidos, erros);
+    const { sessao, usuario } = await exigirSessao();
+    const usuarios = await lerJSON<Usuario[]>(KEYS.usuarios, []);
+    const nome = input.nome.trim();
+    const novos = usuarios.map((u) => (u.id === usuario.id ? { ...u, nome } : u));
+    await gravarJSON(KEYS.usuarios, novos);
+    await salvarSessao({ ...sessao, nome });
+    return publico(novos.find((u) => u.id === usuario.id)!);
+  }
+
+  async excluirConta(): Promise<void> {
+    await simularRede();
+    const { usuario } = await exigirSessao();
+    const usuarios = await lerJSON<Usuario[]>(KEYS.usuarios, []);
+    await gravarJSON(
+      KEYS.usuarios,
+      usuarios.map((u) => (u.id === usuario.id ? { ...u, ativo: false } : u)),
+    );
+    await salvarSessao(null);
   }
 }

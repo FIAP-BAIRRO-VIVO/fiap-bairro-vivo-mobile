@@ -42,3 +42,11 @@ export function iniciais(nome: string): string {
   const ultima = partes.length > 1 ? partes[partes.length - 1][0] : '';
   return (primeira + ultima).toUpperCase();
 }
+
+/** Valida a edição do perfil (nome de 2 a 120 caracteres). */
+export function validarPerfil(input: { nome: string }): Record<string, string> {
+  const nome = input.nome.trim();
+  if (nome.length < 2) return { nome: 'Digite seu nome.' };
+  if (nome.length > 120) return { nome: 'Use no máximo 120 caracteres.' };
+  return {};
+}

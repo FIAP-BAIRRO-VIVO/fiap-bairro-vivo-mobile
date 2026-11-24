@@ -33,6 +33,14 @@ export interface AuthService {
   /** Sessão salva no aparelho (null se não houver ou se expirou). */
   restaurarSessao(): Promise<Sessao | null>;
   perfil(): Promise<UsuarioPublico>;
+  /** Edita os dados da própria conta (hoje, o nome). */
+  atualizarPerfil(input: PerfilInput): Promise<UsuarioPublico>;
+  /** Exclui a própria conta e encerra a sessão. */
+  excluirConta(): Promise<void>;
+}
+
+export interface PerfilInput {
+  nome: string;
 }
 
 /** .NET: ocorrências. */
