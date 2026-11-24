@@ -6,8 +6,8 @@
  */
 export const DATA_SOURCE: 'local' | 'api' = 'api';
 
-/** API Java (Spring Boot): cadastro, login (JWT oficial), perfil e IA de orientação. */
-export const API_JAVA_URL = 'https://fiap-bairro-vivo-java.onrender.com';
+/** API Java (Spring Boot, Azure): cadastro, login (JWT oficial), perfil e IA de orientação. */
+export const API_JAVA_URL = 'https://bairro-vivo-java-566385.azurewebsites.net';
 
 /**
  * No navegador, a API Java recusa CORS; o app chama este caminho no próprio servidor

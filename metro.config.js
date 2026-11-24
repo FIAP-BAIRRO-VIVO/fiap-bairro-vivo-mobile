@@ -12,7 +12,8 @@ const config = getDefaultConfig(__dirname);
  * repassa para a API. No celular o app chama a API Java direto (sem CORS).
  * Só caminhos /api/v1/** são aceitos.
  */
-const API_JAVA_URL = process.env.API_JAVA_URL ?? 'https://fiap-bairro-vivo-java.onrender.com';
+const API_JAVA_URL =
+  process.env.API_JAVA_URL ?? 'https://bairro-vivo-java-566385.azurewebsites.net';
 const PREFIXO = '/api-java';
 const CABECALHOS = ['authorization', 'content-type', 'accept', 'idempotency-key'];
 
