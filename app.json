@@ -34,10 +34,11 @@
       "backgroundColor": "#F6F4EE"
     },
     "extra": {
-      "commitHash": "PREENCHER_HASH_DO_COMMIT"
+      "commitHash": "09470e2"
     },
     "experiments": {
-      "typedRoutes": false
+      "typedRoutes": false,
+      "baseUrl": "/fiap-bairro-vivo-mobile"
     }
   }
 }

@@ -48,6 +48,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "commit-hash": "node scripts/atualizar-commit-hash.js",
+    "build:web": "expo export -p web && node scripts/preparar-pages.mjs",
     "test:api": "node scripts/testar-api.mjs",
     "test:java": "node scripts/testar-api-java.mjs"
   },

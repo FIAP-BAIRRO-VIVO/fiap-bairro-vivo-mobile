@@ -4,7 +4,8 @@
 
 Aplicativo mobile da **FIAP Global Solution 2026/2 — CitizenTech**, disciplina **Mobile Application Development**.
 
-**Vídeo de demonstração:** https://youtu.be/lmjSAfi-Nhw
+**Vídeo de demonstração:** https://youtu.be/lmjSAfi-Nhw  
+**Versão Web (GitHub Pages):** https://fiap-bairro-vivo.github.io/fiap-bairro-vivo-mobile/
 
 ## Solução
 
